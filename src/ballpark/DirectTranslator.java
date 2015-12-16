@@ -1,8 +1,12 @@
 package ballpark;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -10,88 +14,109 @@ import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import ballpark.ParallelTranslator.Translation;
 
 public class DirectTranslator {
 	
 	XPath xpath;
 	InputSource inputSource;
 	Inflection infl;
+	private SAXParserFactory factory;
+	private SAXParser saxParser;
 
+	private String dictionaryPath;
+	
 	
 	public DirectTranslator(String fileToDictionary){
 
+		dictionaryPath = fileToDictionary;
 		xpath = XPathFactory.newInstance().newXPath();
 		inputSource = new InputSource(fileToDictionary);	
 		infl =  new Inflection();
 
+		
+		
+		factory = SAXParserFactory.newInstance();
+		try {
+			saxParser = factory.newSAXParser();
+			
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		} catch (SAXException e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+		
+		
 	}
+	
+	
+	private List<String> getWordSAX(String word){
+		
+		List<String> res = new ArrayList<String>();
+		DirectTranslationHandler dHandler = new DirectTranslationHandler(word, res);
+		
+	    try {
+			saxParser.parse(dictionaryPath, dHandler);
+			return res;
 
-public String translateWord(String token){
-	String[] tokenTreated = Ballpark.separator(token);
-	String wordToPrint = tokenTreated[1];
-	NodeList nodes = search(xpath,inputSource,tokenTreated[1].toLowerCase());
-	List<String> transl = null;
-	if(nodes.getLength() > 0){
-		transl = getTranslations(nodes);
+		} catch (SAXException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return res;
+	}
+	
+
+
+	
+	public String translateWord(String token){
+		String[] tokenTreated = Ballpark.separator(token);
+		String wordToPrint = tokenTreated[1];
+		
+		
+		List<String> transl = getWordSAX(tokenTreated[1].toLowerCase());
+	
 		if(transl.size() > 0){
 			wordToPrint = transl.get(0);
 		}
-	}
-	else{
-		String[] lem = Ballpark.lemmatize(tokenTreated[1].toLowerCase());
-		nodes = search(xpath,inputSource,lem[2]);
-		transl = getTranslations(nodes);
-		if(transl.size() > 0){
-			wordToPrint = infl.inflect(transl.get(0), lem[1]);
-		}
-	}
-	
-	String print = tokenTreated[0] +wordToPrint +tokenTreated[2]+" ";
-	
-	return print;
-	
-	
-}
-	
-	
-public void translate(List<String> tokens){
-
-		StringBuilder sb = new StringBuilder();
-		
-		for(String token : tokens){
-
-			String print = translateWord(token);
-			
-			sb.append(print);
-			System.out.print(print);
-			if(sb.toString().length() > 150){
-				sb = new StringBuilder();
-				System.out.println();
+		else{
+			String[] lem = Ballpark.lemmatize(tokenTreated[1].toLowerCase());
+			transl = getWordSAX(lem[2]);
+			if(transl.size() > 0){
+				wordToPrint = infl.inflect(transl.get(0), lem[1]);
 			}
 		}
-	}
-
-
-	public NodeList search(XPath xpath, InputSource inputSource, String word){
 		
-		String expression = "/dictionary/word[@value=\""+word+"\"]/translation/@value";
-		try {
-			return (NodeList) xpath.evaluate(expression, inputSource, XPathConstants.NODESET);
-		} catch (XPathExpressionException e) {
-			e.printStackTrace();
-		}
-		return null;
+		String print = tokenTreated[0] +wordToPrint +tokenTreated[2]+" ";
+		
+		return print;
+		
+		
 	}
 	
-	public List<String> getTranslations(NodeList nodes){
-		List<String> ret = new ArrayList<String>();
-		for(int i = 0; i < nodes.getLength(); i++){
-			String[] defs = nodes.item(i).getNodeValue().split("[,; ]");
-			for(String s : defs)
-				ret.add(s);
+	
+	public void translate(List<String> tokens){
+	
+			StringBuilder sb = new StringBuilder();
+			
+			for(String token : tokens){
+	
+				String print = translateWord(token);
+				
+				sb.append(print);
+				System.out.print(print);
+				if(sb.toString().length() > 150){
+					sb = new StringBuilder();
+					System.out.println();
+				}
+			}
 		}
-		
-		return ret;
+	
 	}
-
-}

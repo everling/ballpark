@@ -94,7 +94,9 @@ public class Ballpark {
 				m.pc.printUsed();
 			m.pc.saveMemoization(PARALLEL_MEMO);
 		}
+		System.out.println();
 	}
+	
 	
 	/**
 	 * Tokenize file into list of strings
