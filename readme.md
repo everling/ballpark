@@ -24,6 +24,6 @@ http://www.csc.kth.se/tcs/humanlang/tools/granska-tagger-gcc44-amd64.tar.gz (x86
 
 	And follow the instructions of the Granska-tagger readme. The Granska lexicon that is required
     (http://www.csc.kth.se/tcs/humanlang/tools/lex.tar.gz) should be extracted and placed in root folder as:
-	granska-lex/
+	granska-lex/ (rename "lex" to "granska-lex")
 
 
