@@ -82,16 +82,8 @@ public class ParallelTranslator {
 				System.out.print(or.t.best +" ");
 				pointer += n;
 				usedNgrams.add(or.t);
-
-
 			}
-
-			
-		
-
 		}
-		
-		
 	}
 	
 	public void printUsed(){
@@ -102,8 +94,6 @@ public class ParallelTranslator {
 	
 	public void translateSimple(List<String> tokens, int n, DirectTranslator backup, boolean showBackup){
 
-		String print = "";
-		
 		for(int i = 0; i < tokens.size(); i+=n){
 			
 			int size = Math.min(tokens.size() - i, n);
@@ -120,22 +110,12 @@ public class ParallelTranslator {
 				for(String w : ngram){
 					String toPrint = (showBackup?"[":"")+backup.translateWord(w)+(showBackup?"]":"");
 					System.out.print(toPrint);
-					print += toPrint;
-					if(print.length() > 150){
-						System.out.println();
-						print = "";
-					}
 				}
 			}
 			else{
 				usedNgrams.add(translation);
 				String toPrint = translation.best +" ";	
 				System.out.print(toPrint);
-				print += toPrint;
-				if(print.length() > 150){
-					System.out.println();
-					print = "";
-				}
 				
 			}
 		}

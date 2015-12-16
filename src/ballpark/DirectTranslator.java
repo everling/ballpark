@@ -20,8 +20,6 @@ import ballpark.ParallelTranslator.Translation;
 
 public class DirectTranslator {
 	
-	XPath xpath;
-	InputSource inputSource;
 	Inflection infl;
 	private SAXParserFactory factory;
 	private SAXParser saxParser;
@@ -32,8 +30,6 @@ public class DirectTranslator {
 	public DirectTranslator(String fileToDictionary){
 
 		dictionaryPath = fileToDictionary;
-		xpath = XPathFactory.newInstance().newXPath();
-		inputSource = new InputSource(fileToDictionary);	
 		infl =  new Inflection();
 
 		
@@ -104,18 +100,9 @@ public class DirectTranslator {
 	
 	public void translate(List<String> tokens){
 	
-			StringBuilder sb = new StringBuilder();
-			
 			for(String token : tokens){
-	
 				String print = translateWord(token);
-				
-				sb.append(print);
 				System.out.print(print);
-				if(sb.toString().length() > 150){
-					sb = new StringBuilder();
-					System.out.println();
-				}
 			}
 		}
 	
