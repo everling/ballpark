@@ -63,7 +63,7 @@ public class NGramDestHandler extends DefaultHandler{
 
 	public void characters(char ch[], int start, int length) throws SAXException {
 		
-		if (relevantLink && currentWord >= currentLink.firstWord) {
+		if (relevantLink && currentLink.indexes.contains(currentWord)){
 			String w = new String(ch, start, length);
 			w = w.trim();
 			currentString += w;

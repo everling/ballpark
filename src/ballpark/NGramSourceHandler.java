@@ -17,9 +17,8 @@ public class NGramSourceHandler extends DefaultHandler{
 	List<Res> results;
 	
 	//indexes
-	int first = 1000; 
-	int last = -1;
 	String wlinkAtt;
+	List<Integer> indexes = new ArrayList<Integer>();
 	
 	
 	public NGramSourceHandler(String[] words, List<Res> results){
@@ -63,22 +62,17 @@ public class NGramSourceHandler extends DefaultHandler{
 
 	}
 		
-		
-	
-
 	public void acceptWord(){
 		accepted++;
 		
 		for(Integer i : wordIndexes()){
-			if(i > last)
-				last = i;
-			if(i < first)
-				first = i;
+			if(!indexes.contains(i))
+				indexes.add(i);
 		}
 		
 		if(accepted == words.length){
-			if(last > -1 && first < 1000){
-				Res r = new Res(link,first,last);
+			if(indexes.size() > 0){
+				Res r = new Res(link,indexes);
 				results.add(r);
 			}
 			reset();
@@ -87,8 +81,7 @@ public class NGramSourceHandler extends DefaultHandler{
 	
 	public void reset(){
 		accepted = 0;
-		first = 1000;
-		last = -1;
+		indexes = new ArrayList<Integer>();
 	}
 	
 	public void characters(char ch[], int start, int length) throws SAXException {
@@ -112,13 +105,22 @@ public class NGramSourceHandler extends DefaultHandler{
 	public class Res{
 		
 		String linkID;
-		int firstWord;
+		//int firstWord;
 		int lastWord;
+		List<Integer> indexes;
 		
-		public Res(String linkID, int firstWord, int lastWord){
+		public Res(String linkID, List<Integer> indexes){
 			this.linkID = linkID;
-			this.firstWord = firstWord;
-			this.lastWord = lastWord;
+			//this.firstWord = firstWord;
+			//this.lastWord = lastWord;
+			this.indexes = indexes;
+			
+			lastWord = 0;
+			for(Integer i : indexes){
+				if(i > lastWord)
+					lastWord = i;
+			}
+			
 		}
 		
 	}
