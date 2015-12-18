@@ -36,7 +36,7 @@ public class Inflection {
 	
 	public String inflectNoun(String nounLemma, String inflection){
 		
-		String toRet = "";
+		String toRet = null;
 		WordElement word = lexicon.getWord(nounLemma, LexicalCategory.NOUN);
 
 		
@@ -49,6 +49,8 @@ public class Inflection {
 			}
 			if(toRet != null)
 				return "the " + toRet;
+			else
+				return "the " + nounLemma;
 		}
 		return 	nounLemma;
 	}
