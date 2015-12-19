@@ -65,19 +65,29 @@ public class NGramDestHandler extends DefaultHandler{
 		
 		if (relevantLink && currentLink.indexes.contains(currentWord)){
 			String w = new String(ch, start, length);
-			w = w.trim();
-			currentString += w;
 			
-			if(w.length() > 0){
-				if(currentWord < currentLink.lastWord){
-					currentString += " ";
-				}
-				else{ //ngram finished
-					results.add(currentString);
-					currentString = "";
-					relevantLink = false;
-					currentLink = null;
-					currentWord = 0;
+			w = w.trim();
+			
+			if(w.equals("nt") || w.matches("[\\[\\]]")){ //"not translated" or brackets
+				currentString = "";
+				relevantLink = false;
+				currentLink = null;
+				currentWord = 0;
+			}
+			else{
+				currentString += w;
+				
+				if(w.length() > 0){
+					if(currentWord < currentLink.lastWord){
+						currentString += " ";
+					}
+					else{ //ngram finished
+						results.add(currentString);
+						currentString = "";
+						relevantLink = false;
+						currentLink = null;
+						currentWord = 0;
+					}
 				}
 			}
 		}
