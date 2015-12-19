@@ -1,3 +1,5 @@
+A swedish-english translator. It's called "ballpark" because it translates really poorly, but "in the same ballpark".
+
 Files needed:
 
 ASPAC - Swedish-English corpus (Parallel corpus):
